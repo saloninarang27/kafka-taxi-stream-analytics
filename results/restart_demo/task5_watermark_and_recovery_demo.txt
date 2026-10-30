@@ -1,0 +1,74 @@
+﻿======================================================================
+ TASK 5: EVENT-TIME, DELAYED EVENTS & RESTART RECOVERY DEMO
+======================================================================
+
+======================================================================
+ [8.1] DELAYED / OUT-OF-ORDER EVENT HANDLING
+======================================================================
+  [WINDOW OPENED] 2024-01-01T10:00:00 -> 2024-01-01T11:00:00
+  [WINDOW OPENED] 2024-01-01T11:00:00 -> 2024-01-01T12:00:00
+  [WINDOW CLOSED]  2024-01-01T10:00:00  events=36  HLL_err=0.0%
+
+  [LATE EVENT DETECTED]
+    event_id    : LATE-EVENT-A
+    event_time  : 2024-01-01T10:30:00  (belongs to window 2024-01-01T10:00:00)
+    watermark   : 2024-01-01T11:18:35
+    window_end  : 2024-01-01T11:00:00
+    action      : DISCARDED (window already closed)
+
+  [LATE EVENT DETECTED]
+    event_id    : LATE-EVENT-B
+    event_time  : 2024-01-01T10:55:00  (belongs to window 2024-01-01T10:00:00)
+    watermark   : 2024-01-01T11:18:35
+    window_end  : 2024-01-01T11:00:00
+    action      : DISCARDED (window already closed)
+  [STREAM END FLUSH] 2024-01-01T11:00:00  events=10
+
+  Summary:
+    Total events processed   : 46
+    Late events discarded    : 2
+    Allowed lateness         : 25s
+    Watermark at stream end  : 2024-01-01T11:18:35
+
+======================================================================
+ [8.2] RESTART & FAILURE RECOVERY DEMO (Real Kafka Lag Measurement)
+======================================================================
+
+  Kafka:       127.0.0.1:9092
+  Topic:       taxi.clean
+  Group:       stage2-group
+
+  Measuring current consumer lag on taxi.clean ...
+  [WARNING] Could not connect to Kafka: KafkaTimeoutError: Unable to bootstrap from 127.0.0.1:9092
+  Start Kafka first:  python setup/setup_kafka.py --skip-start
+
+  How to run the restart demo manually:
+    1. Run the full pipeline:  python run_pipeline.py
+    2. Kill the Stage 2 window (Ctrl+C in that terminal).
+    3. Wait 10-20 seconds (producer keeps sending to taxi.clean).
+    4. Run this script: python demo_task5.py  -> lag > 0 is shown.
+    5. Restart Stage 2: python stage2_stream_analytics/stage2.py
+    6. Run this script again: python demo_task5.py  -> lag draining.
+    Screenshot the three outputs for submission.
+
+  Recovery Semantics (Viva-Ready Honest Answer):
+  - Guarantee: At-Least-Once delivery via Kafka consumer offsets.
+  - Offsets are saved in Kafka (__consumer_offsets): Stage 2 resumes from the last committed offset.
+  - In-memory state is LOST on crash: open tumbling windows, DGIM bit-buckets,
+    and reservoir samples are wiped to zero on process restart.
+  - Effect on tumbling windows:
+    * The active window at crash time loses all pre-crash data. Upon restart,
+      it starts accumulating from zero, producing an INCOMPLETE / undercounted summary.
+  - Effect on duplicate counting:
+    * Uncommitted events (processed in the ~5s auto-commit window before crash) ARE re-delivered.
+      These events get processed twice (events_processed, DGIM, and reservoir double-counting).
+  - Why Bloom Filter DOES NOT protect Stage 2:
+    * Bloom Filter is located in Stage 1 (taxi.raw -> taxi.clean).
+    * When Stage 2 crashes and re-reads taxi.clean, those events are already written
+      to taxi.clean with bloom_seen_before=False. Stage 2 has no Bloom filter of its own.
+  - Conclusion: Offsets bach jaate hain, par in-memory state kho jata hai;
+    isliye restart ke baad window adhoori aur uncommitted events duplicate ho sakte hain.
+
+======================================================================
+ Demo complete.
+======================================================================

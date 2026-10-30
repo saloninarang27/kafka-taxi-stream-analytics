@@ -1,0 +1,59 @@
+# BDA Assignment 2 - Configuration File
+# Modify these parameters without editing source code
+
+# ── Kafka ──────────────────────────────────────────────────────────────────────
+kafka:
+  bootstrap_servers: "127.0.0.1:9092"
+  topics:
+    raw: "taxi.raw"
+    clean: "taxi.clean"
+    metrics: "taxi.metrics"
+    lsh: "taxi.lsh"
+  # Parallelism defaults for run_pipeline.py (CLI --partitions / --consumers override them).
+  # Measured values land in results/experiment_summary.csv columns
+  # partitions, stage1_consumers, stage2_consumers (+ *_active_consumers).
+  partitions: 3          # partitions of taxi.raw and taxi.clean
+  consumers: 4           # parallel processes for Stage 1 AND for Stage 2 (Stage 3 always 1)
+  replication_factor: 1
+
+# ── Producer ──────────────────────────────────────────────────────────────────
+producer:
+  dataset_path: "data/yellow_tripdata_2024-01.parquet"   # auto-downloaded if absent
+  rate: 1000             # events/second  (low≈200, medium≈1000, high≈3000)
+  duplicate_rate: 0.02   # 2% deliberate duplicates
+  delayed_event_rate: 0.02
+  max_delay_seconds: 20
+  run_id: "P3-medium"    # tag embedded in output JSON
+  max_events: 50000      # stop after this many rows per run (0 = no limit, ~50min per run)
+
+# ── Window ────────────────────────────────────────────────────────────────────
+window_minutes: 60
+
+# ── Bloom Filter ──────────────────────────────────────────────────────────────
+bloom:
+  expected_items: 200000
+  false_positive_rate: 0.01
+
+# ── Reservoir Sampling ────────────────────────────────────────────────────────
+reservoir:
+  sizes: [100, 1000, 10000]
+
+# ── HyperLogLog ───────────────────────────────────────────────────────────────
+hll:
+  precision: 12          # b-bits; error ≈ 1.04/√(2^b)
+
+# ── DGIM ──────────────────────────────────────────────────────────────────────
+dgim:
+  max_window: 10000
+  query_ks: [1000, 5000, 10000]
+
+# ── LSH / MinHash ─────────────────────────────────────────────────────────────
+lsh:
+  num_hashes: 100
+  bands: 20
+  rows_per_band: 5       # 20 * 5 = 100  ✓
+  jaccard_threshold: 0.50
+  min_trips_per_zone: 20
+
+# ── Entity Sampling ──────────────────────────────────────────────────────────
+entity_sample_fraction: 0.15   # storage budget for BOTH event and entity sampling (Stage 2)

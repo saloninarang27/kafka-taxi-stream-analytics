@@ -1,0 +1,61 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.whl
+.installed.cfg
+*.spec
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Data files (large, not for VCS)
+data/*.parquet
+data/*.csv.gz
+data/*.tar.gz
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Kafka local data
+C:/kafka/data/
+
+# Credentials / secrets
+*.env
+.env
+secrets.yaml

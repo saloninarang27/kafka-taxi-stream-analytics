@@ -1,0 +1,101 @@
+2026-10-06 22:26:16,638 [STAGE2] INFO IO loop starting (client_id=kafka-python-3.0.11)
+2026-10-06 22:26:16,638 [STAGE2] INFO Attempting bootstrap to bootstrap-0 at 127.0.0.1:9092 (rack None)
+2026-10-06 22:26:16,638 [STAGE2] INFO Initializing connection for node_id bootstrap-0 at 127.0.0.1:9092 (rack=None)
+2026-10-06 22:26:16,642 [STAGE2] INFO <KafkaTCPTransport [127.0.0.1:9092<-55797]>: connected to <socket.socket fd=672, family=2, type=1, proto=0, laddr=('127.0.0.1', 55797), raddr=('127.0.0.1', 9092)>
+2026-10-06 22:26:16,645 [STAGE2] INFO <KafkaConnection node_id=bootstrap-0 host=[127.0.0.1:9092<-55797] broker_version=unknown (initializing)>: Broker version identified as 3.7
+2026-10-06 22:26:16,646 [STAGE2] INFO <KafkaConnection node_id=bootstrap-0 host=[127.0.0.1:9092<-55797] broker_version=(3, 7) (connected)>: Connected
+2026-10-06 22:26:16,649 [STAGE2] INFO Updated metadata: ClusterMetadata(brokers: 1, topics: 0, coordinators: 0)
+2026-10-06 22:26:16,649 [STAGE2] INFO Bootstrap complete: ClusterMetadata(brokers: 1, topics: 0, coordinators: 0)
+2026-10-06 22:26:16,649 [STAGE2] INFO Closing bootstrap connection bootstrap-0
+2026-10-06 22:26:16,649 [STAGE2] INFO <KafkaTCPTransport [127.0.0.1:9092<-55797]>: Closing transport
+2026-10-06 22:26:16,650 [STAGE2] INFO <KafkaConnection node_id=bootstrap-0 broker_version=(3, 7) (disconnected)>: Connection closed
+2026-10-06 22:26:16,650 [STAGE2] INFO Starting metadata refresh loop
+2026-10-06 22:26:16,765 [STAGE2] INFO Initializing connection for node_id 0 at 127.0.0.1:9092 (rack=None)
+2026-10-06 22:26:16,766 [STAGE2] INFO <KafkaTCPTransport [127.0.0.1:9092<-55798]>: connected to <socket.socket fd=776, family=2, type=1, proto=0, laddr=('127.0.0.1', 55798), raddr=('127.0.0.1', 9092)>
+2026-10-06 22:26:16,768 [STAGE2] INFO <KafkaConnection node_id=0 host=[127.0.0.1:9092<-55798] broker_version=(3, 7) (connected)>: Connected
+2026-10-06 22:26:16,770 [STAGE2] INFO Updated metadata: ClusterMetadata(brokers: 1, topics: 5, coordinators: 0)
+2026-10-06 22:26:16,772 [STAGE2] INFO Coordinator for GROUP/stage2-group is MetadataResponseBroker(node_id='coordinator-0', host='127.0.0.1', port=9092, rack=None)
+2026-10-06 22:26:16,772 [STAGE2] INFO Discovered coordinator coordinator-0 for group stage2-group
+2026-10-06 22:26:16,772 [STAGE2] INFO Initializing connection for node_id coordinator-0 at 127.0.0.1:9092 (rack=None)
+2026-10-06 22:26:16,773 [STAGE2] INFO <KafkaTCPTransport [127.0.0.1:9092<-55799]>: connected to <socket.socket fd=804, family=2, type=1, proto=0, laddr=('127.0.0.1', 55799), raddr=('127.0.0.1', 9092)>
+2026-10-06 22:26:16,777 [STAGE2] INFO <KafkaConnection node_id=coordinator-0 host=[127.0.0.1:9092<-55799] broker_version=(3, 7) (connected)>: Connected
+2026-10-06 22:26:16,844 [STAGE2] INFO <KafkaTCPTransport [127.0.0.1:9092<-55798]>: Closing transport
+2026-10-06 22:26:16,844 [STAGE2] INFO <KafkaConnection node_id=0 broker_version=(3, 7) (disconnected)>: Connection closed
+2026-10-06 22:26:16,844 [STAGE2] INFO <KafkaTCPTransport [127.0.0.1:9092<-55799]>: Closing transport
+2026-10-06 22:26:16,844 [STAGE2] INFO <KafkaConnection node_id=coordinator-0 broker_version=(3, 7) (disconnected)>: Connection closed
+2026-10-06 22:26:16,844 [STAGE2] INFO Stopping metadata refresh loop
+2026-10-06 22:26:16,844 [STAGE2] INFO IO loop exited cleanly (client_id=kafka-python-3.0.11, stop=True)
+======================================================================
+ TASK 5: EVENT-TIME, DELAYED EVENTS & RESTART RECOVERY DEMO
+======================================================================
+
+======================================================================
+ [8.1] DELAYED / OUT-OF-ORDER EVENT HANDLING
+======================================================================
+  [WINDOW OPENED] 2024-01-01T10:00:00 -> 2024-01-01T11:00:00
+  [WINDOW OPENED] 2024-01-01T11:00:00 -> 2024-01-01T12:00:00
+  [WINDOW CLOSED]  2024-01-01T10:00:00  events=36  HLL_err=0.0%
+
+  [LATE EVENT DETECTED]
+    event_id    : LATE-EVENT-A
+    event_time  : 2024-01-01T10:30:00  (belongs to window 2024-01-01T10:00:00)
+    watermark   : 2024-01-01T11:18:35
+    window_end  : 2024-01-01T11:00:00
+    action      : DISCARDED (window already closed)
+
+  [LATE EVENT DETECTED]
+    event_id    : LATE-EVENT-B
+    event_time  : 2024-01-01T10:55:00  (belongs to window 2024-01-01T10:00:00)
+    watermark   : 2024-01-01T11:18:35
+    window_end  : 2024-01-01T11:00:00
+    action      : DISCARDED (window already closed)
+  [STREAM END FLUSH] 2024-01-01T11:00:00  events=10
+
+  Summary:
+    Total events processed   : 46
+    Late events discarded    : 2
+    Allowed lateness         : 25s
+    Watermark at stream end  : 2024-01-01T11:18:35
+
+======================================================================
+ [8.2] RESTART & FAILURE RECOVERY DEMO (Real Kafka Lag Measurement)
+======================================================================
+
+  Kafka:       127.0.0.1:9092
+  Topic:       taxi.clean
+  Group:       stage2-group
+
+  Measuring current consumer lag on taxi.clean ...
+    Part |    Committed |   End Offset |      Lag
+  -------+--------------+--------------+---------
+       0 |         2026 |         2377 |      351
+       1 |         2732 |         3248 |      516
+       2 |         1781 |         2087 |      306
+       3 |         1619 |         1917 |      298
+
+  Total consumer lag (all partitions): 1,471 messages
+  Status: Stage 2 is BEHIND by 1,471 messages.
+  Backlog volume: 1,471 events waiting in taxi.clean.
+  Restarting Stage 2 with same group_id will resume from committed offsets.
+
+  Recovery Semantics (Viva-Ready Honest Answer):
+  - Guarantee: At-Least-Once delivery via Kafka consumer offsets.
+  - Offsets are saved in Kafka (__consumer_offsets): Stage 2 resumes from the last committed offset.
+  - In-memory state is LOST on crash: open tumbling windows, DGIM bit-buckets,
+    and reservoir samples are wiped to zero on process restart.
+  - Effect on tumbling windows:
+    * The active window at crash time loses all pre-crash data. Upon restart,
+      it starts accumulating from zero, producing an INCOMPLETE / undercounted summary.
+  - Effect on duplicate counting:
+    * Uncommitted events (processed in the ~5s auto-commit window before crash) ARE re-delivered.
+      These events get processed twice (events_processed, DGIM, and reservoir double-counting).
+  - Why Bloom Filter DOES NOT protect Stage 2:
+    * Bloom Filter is located in Stage 1 (taxi.raw -> taxi.clean).
+    * When Stage 2 crashes and re-reads taxi.clean, those events are already written
+      to taxi.clean with bloom_seen_before=False. Stage 2 has no Bloom filter of its own.
+  - Conclusion: Offsets bach jaate hain, par in-memory state kho jata hai;
+    isliye restart ke baad window adhoori aur uncommitted events duplicate ho sakte hain.
+
+======================================================================
+ Demo complete.
+======================================================================
